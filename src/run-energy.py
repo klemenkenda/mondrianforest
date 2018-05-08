@@ -13,7 +13,7 @@ class settings:
     bagging = 0
     budget= -1.0
     budget_to_use= float("inf")
-    data_path = 'C:\\Users\\kkenda\\Desktop\\moa\\moa\\src\\examples\\java\\moa\\experiments\\data/'
+    data_path = 'D:\\MondrianForests\\data\\'
     dataset = 'id12041022_1_AR_WF_DT.arff'
     debug = 0
     discount_factor = 10
@@ -73,4 +73,22 @@ def perform_file(fileName):
             mf.partial_fit(data, train_ids_current_minibatch, settings, param, cache)
         print("Finished training ...")        
 
-perform_file('id12041022_1_AR_WF_DT')
+# main part of the programe
+import optparse
+
+parser = optparse.OptionParser();
+
+parser.add_option('-n', '--node', action="store", dest="node", help="Name of the node to RF.", default="id12041022")
+parser.add_option('-f', '--from', action="store", dest="fromH", help="From horizon", default=1)
+parser.add_option('-t', '--to', action="store", dest="toH", help="To horizon", default=24)
+
+options, args = parser.parse_args()
+
+print("NODE:", options.node)
+print("FROM:", options.fromH)
+print("TO:", options.toH)
+
+for horizon in range(int(options.fromH), int(options.toH) + 1):
+    fileName = options.node + "_" + str(horizon) + "_AR_WF_DT"
+    print(fileName)
+    perform_file(fileName)
