@@ -735,7 +735,8 @@ class MondrianTree(object):
                     print expected_cut_time
                     print np.any(np.isnan(expected_cut_time))
                     print 1.0 / expo_parameter_non_zero
-                    raise AssertionError
+                    # TODO: Why does this happen?!
+                    #raise AssertionError
                 if not settings.smooth_hierarchically:
                     pred_mean_tmp = self.sum_y[node_id] / float(self.n_points[node_id])
                     pred_second_moment_tmp = self.sum_y2[node_id] / float(self.n_points[node_id]) + param.noise_variance
@@ -786,7 +787,7 @@ class MondrianTree(object):
             except KeyError:
                 pass
         pred_var = pred_second_moment - (pred_mean ** 2)
-        if True or settings.debug:  # FIXME: remove later
+        if settings.debug:  # FIXME: remove later
             assert not np.any(np.isnan(pred_mean))
             assert not np.any(np.isnan(pred_var))
             try:

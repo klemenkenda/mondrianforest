@@ -11,6 +11,7 @@ import random
 from itertools import izip
 import scipy.io
 from warnings import warn
+from scipy.io import arff
 try:
     from scipy.special import gammaln, digamma
     from scipy.special import gdtrc         # required only for regression
@@ -226,23 +227,39 @@ def check_dataset(settings):
             or settings.dataset[:3] == 'sim' or settings.dataset == 'navada' \
             or settings.dataset[:3] == 'msg' or settings.dataset[:14] == 'airline-delays' \
             or settings.dataset == 'branin'
-    if not special_cases:
-        try:
-            if settings.optype == 'class':
-                assert(settings.dataset in classification_datasets)
-            else:
-                assert(settings.dataset in regression_datasets)
-        except AssertionError:
-            print 'Unrecognized dataset for optype; dataset = %s, optype = %s' % \
-                    (settings.dataset, settings.optype)
-            #raise AssertionError
+    #if not special_cases:
+    #    try:
+    #        if settings.optype == 'class':
+    #            assert(settings.dataset in classification_datasets)
+    #        else:
+    #            assert(settings.dataset in regression_datasets)
+    #    except AssertionError:
+    #        print 'Unrecognized dataset for optype; dataset = %s, optype = %s' % \
+    #                (settings.dataset, settings.optype)
+    #        #raise AssertionError
     return special_cases
 
 
 def load_data(settings):
     data = {}
     special_cases = check_dataset(settings)
-    if not special_cases:
+    if (settings.dataset[-4:] == 'arff'):
+        print(settings.data_path + settings.dataset)
+        f = open(settings.data_path + settings.dataset, 'r') 
+        xdata, meta = arff.loadarff(f)
+        xdata = np.asarray(xdata.tolist(), dtype=np.float32)
+        data = {}
+        dflen = len(xdata)
+        dfsplit = np.floor(dflen * 1).astype(int)
+        data['x_train'] = xdata[:dfsplit,:-1]
+        data['y_train'] = xdata[:dfsplit,-1:]
+        data['x_test'] = xdata[dfsplit-1:,:-1]
+        data['y_test'] = xdata[dfsplit-1:,-1:]
+        data['is_sparse'] = False
+        data['n_dim'] = len(data['x_train'][0])
+        data['n_test'] = len(data['x_test'])
+        data['n_train'] = len(data['x_train'])
+    elif not special_cases:
         data = pickle.load(open(settings.data_path + settings.dataset + '/' + \
                 settings.dataset + '.p', "rb"))
     elif settings.dataset == 'toy-mf':
@@ -318,7 +335,9 @@ def load_data(settings):
             draw_mondrian = False
         if is_mondrianforest and (not draw_mondrian):
             reset_random_seed(settings)
-            np.random.shuffle(train_ids)
+            # TODO: why shuffle in stream mining scenario? this does not make sense!
+            #       (KKenda)
+            # np.random.shuffle(train_ids)
             # NOTE: shuffle should be the first call after resetting random seed
             #       all experiments would NOT use the same dataset otherwise
         train_ids_cumulative = np.arange(0)
