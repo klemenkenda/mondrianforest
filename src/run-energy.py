@@ -10,31 +10,32 @@ from mondrianforest import process_command_line, MondrianForest
 
 class settings:
     alpha = 0
-    bagging = 0
+    bagging = 1
     budget= -1.0
-    budget_to_use= float("inf")
-    data_path = 'D:\\MondrianForests\\data\\'
+    budget_to_use = float("inf")
+    #data_path = 'D:\\MondrianForests\\data\\'
+    data_path = 'C:\\Users\\kkenda\\Desktop\\moa\\moa\\src\\examples\\java\\moa\\experiments\\data\\'
     dataset = 'id12041022_1_AR_WF_DT.arff'
     debug = 0
     discount_factor = 10
     draw_mondrian = 0
     init_id = 1
-    min_samples_split = 2
+    min_samples_split = 200
     n_minibatches = 4000
     n_mondrians = 10
     name_metric = 'mse'
     normalize_features = 1
     op_dir = 'results'
     optype = 'real'
-    perf_dataset_keys = ['train', 'test']
-    perf_metrics_keys = ['log_prob', 'acc']
-    perf_store_keys = ['pred_prob']
-    save = 1
+    perf_dataset_keys = ['train']
+    perf_metrics_keys = [] # 'log_prob', 'acc'
+    perf_store_keys = [] # 'pred_prob'
+    save = 0
     select_features = 0
     smooth_hierarchically = 0
     store_every = 0
     tag = ''
-    verbose = 1
+    verbose = 0
 
 def perform_file(fileName):
     settings.dataset = fileName + ".arff"
